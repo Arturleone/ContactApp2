@@ -29,7 +29,7 @@ class ContactAdapter(
 
     override fun getItemCount(): Int = contacts.size
 
-    class ContactViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class ContactViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val contactName: TextView = itemView.findViewById(R.id.contactName)
         private val contactEmail: TextView = itemView.findViewById(R.id.contactEmail)
         private val favoriteButton: ImageButton = itemView.findViewById(R.id.favoriteButton)
@@ -45,19 +45,31 @@ class ContactAdapter(
             contactName.text = contact.name
             contactEmail.text = contact.email
 
-            // Carrega a imagem do contato (se disponível)
+            // Verifica se a URI da foto não é nula antes de carregar a imagem
             if (contact.photoUri != null) {
-                contactImage.setImageURI(contact.photoUri)
+                try {
+                    contactImage.setImageURI(contact.photoUri)
+                } catch (e: Exception) {
+                    // Caso ocorra algum erro ao carregar a URI da imagem, usar o placeholder
+                    contactImage.setImageResource(R.drawable.ic_person_placeholder)
+                }
             } else {
                 contactImage.setImageResource(R.drawable.ic_person_placeholder) // Placeholder padrão
             }
 
-            itemView.setOnClickListener { onContactClick(contact) }
             favoriteButton.setImageResource(
                 if (contact.isFavorite) R.drawable.ic_star else R.drawable.ic_star_border
             )
-            favoriteButton.setOnClickListener { onFavoriteClick(contact) }
-            deleteButton.setOnClickListener { onDeleteClick(contact) }
+
+            itemView.setOnClickListener { onContactClick(contact) }
+            favoriteButton.setOnClickListener {
+                onFavoriteClick(contact)
+                notifyItemChanged(adapterPosition) // Notifica a mudança apenas para o item atual
+            }
+            deleteButton.setOnClickListener {
+                onDeleteClick(contact)
+                notifyItemRemoved(adapterPosition) // Notifica a remoção do item atual
+            }
         }
     }
 }
