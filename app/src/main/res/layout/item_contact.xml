@@ -6,6 +6,15 @@
     android:padding="16dp"
     android:gravity="center_vertical">
 
+    <!-- Imagem do Contato -->
+    <ImageView
+        android:id="@+id/contactImage"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginEnd="16dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_person_placeholder" />
+
     <!-- Textos: Nome e Email -->
     <LinearLayout
         android:layout_width="0dp"

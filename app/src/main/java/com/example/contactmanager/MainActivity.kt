@@ -2,6 +2,7 @@ package com.example.contactmanager
 
 import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -71,18 +72,21 @@ class MainActivity : AppCompatActivity() {
         if (requestCode == ADD_CONTACT_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             val contactName = data?.getStringExtra("contactName") ?: return
             val contactEmail = data.getStringExtra("contactEmail") ?: return
+            val contactPhotoUri = data.getStringExtra("contactPhotoUri")?.let { Uri.parse(it) }
 
             val newContact = Contact(
                 id = (contacts.size + 1).toLong(),
                 name = contactName,
                 email = contactEmail,
-                isFavorite = false
+                isFavorite = false,
+                photoUri = contactPhotoUri // Adiciona a imagem ao contato
             )
             contacts.add(newContact)
             sortContacts()
             adapter.notifyDataSetChanged()
         }
     }
+
 
     companion object {
         const val ADD_CONTACT_REQUEST_CODE = 1
