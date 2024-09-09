@@ -2,4 +2,10 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="bar">#F0F0F0</color>
+    <color name="divider">#EBEBEB</color>
+    <color name="icons">#9CACFB</color>
+    <color name="statusBar">#9CACFB</color>
+    <color name="fundo">#FFFFFF</color>
+
 </resources>
