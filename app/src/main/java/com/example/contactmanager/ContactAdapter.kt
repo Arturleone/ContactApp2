@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 
 class ContactAdapter(
     private val contacts: MutableList<Contact>,
@@ -17,17 +18,19 @@ class ContactAdapter(
     private val onDeleteClick: (Contact) -> Unit
 ) : RecyclerView.Adapter<ContactAdapter.ContactViewHolder>() {
 
+    private var filteredContacts = contacts
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ContactViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_contact, parent, false)
         return ContactViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: ContactViewHolder, position: Int) {
-        val contact = contacts[position]
+        val contact = filteredContacts[position]
         holder.bind(contact, onContactClick, onFavoriteClick, onDeleteClick)
     }
 
-    override fun getItemCount(): Int = contacts.size
+    override fun getItemCount(): Int = filteredContacts.size
 
     inner class ContactViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val contactName: TextView = itemView.findViewById(R.id.contactName)
@@ -45,16 +48,15 @@ class ContactAdapter(
             contactName.text = contact.name
             contactEmail.text = contact.email
 
-            // Verifica se a URI da foto não é nula antes de carregar a imagem
+            // Usando Glide para carregar a imagem
             if (contact.photoUri != null) {
-                try {
-                    contactImage.setImageURI(contact.photoUri)
-                } catch (e: Exception) {
-                    // Caso ocorra algum erro ao carregar a URI da imagem, usar o placeholder
-                    contactImage.setImageResource(R.drawable.ic_person_placeholder)
-                }
+                Glide.with(itemView.context)
+                    .load(contact.photoUri)
+                    .placeholder(R.drawable.ic_person_placeholder)
+                    .error(R.drawable.ic_person_placeholder)
+                    .into(contactImage)
             } else {
-                contactImage.setImageResource(R.drawable.ic_person_placeholder) // Placeholder padrão
+                contactImage.setImageResource(R.drawable.ic_person_placeholder)
             }
 
             favoriteButton.setImageResource(
@@ -64,12 +66,44 @@ class ContactAdapter(
             itemView.setOnClickListener { onContactClick(contact) }
             favoriteButton.setOnClickListener {
                 onFavoriteClick(contact)
-                notifyItemChanged(adapterPosition) // Notifica a mudança apenas para o item atual
+                notifyItemChanged(adapterPosition) // Atualiza o item específico
             }
             deleteButton.setOnClickListener {
                 onDeleteClick(contact)
-                notifyItemRemoved(adapterPosition) // Notifica a remoção do item atual
+                notifyItemRemoved(adapterPosition)
+                notifyItemRangeChanged(adapterPosition, filteredContacts.size)
             }
         }
+    }
+
+    fun filter(query: String) {
+        filteredContacts = contacts.filter {
+            it.name.contains(query, ignoreCase = true) ||
+                    it.email.contains(query, ignoreCase = true)
+        }.toMutableList()
+        notifyDataSetChanged()
+    }
+
+    fun addContact(contact: Contact) {
+        contacts.add(contact)
+        filter("") // Reaplica o filtro para incluir o novo contato
+    }
+
+    fun removeContact(contact: Contact) {
+        contacts.remove(contact)
+        filter("") // Reaplica o filtro para remover o contato da lista filtrada
+    }
+
+    fun updateContact(contact: Contact) {
+        val index = contacts.indexOfFirst { it.id == contact.id }
+        if (index != -1) {
+            contacts[index] = contact
+            filter("") // Reaplica o filtro para refletir as mudanças
+        }
+    }
+
+    fun sortContacts() {
+        filteredContacts = filteredContacts.sortedByDescending { it.isFavorite }.toMutableList()
+        notifyDataSetChanged()
     }
 }
