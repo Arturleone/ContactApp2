@@ -48,7 +48,6 @@ class ContactAdapter(
             contactName.text = contact.name
             contactEmail.text = contact.email
 
-            // Usando Glide para carregar a imagem
             if (contact.photoUri != null) {
                 Glide.with(itemView.context)
                     .load(contact.photoUri)
@@ -66,7 +65,7 @@ class ContactAdapter(
             itemView.setOnClickListener { onContactClick(contact) }
             favoriteButton.setOnClickListener {
                 onFavoriteClick(contact)
-                notifyItemChanged(adapterPosition) // Atualiza o item específico
+                notifyItemChanged(adapterPosition)
             }
             deleteButton.setOnClickListener {
                 onDeleteClick(contact)
@@ -86,19 +85,19 @@ class ContactAdapter(
 
     fun addContact(contact: Contact) {
         contacts.add(contact)
-        filter("") // Reaplica o filtro para incluir o novo contato
+        filter("")
     }
 
     fun removeContact(contact: Contact) {
         contacts.remove(contact)
-        filter("") // Reaplica o filtro para remover o contato da lista filtrada
+        filter("")
     }
 
     fun updateContact(contact: Contact) {
         val index = contacts.indexOfFirst { it.id == contact.id }
         if (index != -1) {
             contacts[index] = contact
-            filter("") // Reaplica o filtro para refletir as mudanças
+            filter("")
         }
     }
 

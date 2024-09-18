@@ -7,5 +7,5 @@ data class Contact(
     val name: String,
     val email: String,
     var isFavorite: Boolean,
-    var photoUri: Uri? = null // Adiciona campo para armazenar a URI da imagem
+    var photoUri: Uri? = null
 )

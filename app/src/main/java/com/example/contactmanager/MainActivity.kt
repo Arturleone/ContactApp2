@@ -61,7 +61,6 @@ class MainActivity : AppCompatActivity() {
         )
         recyclerView.adapter = adapter
 
-        // Mock data para testar
         contacts.add(Contact(1, "John Doe", "john@example.com", false))
         contacts.add(Contact(2, "Jane Smith", "jane@example.com", true))
         adapter.notifyDataSetChanged()
@@ -72,7 +71,6 @@ class MainActivity : AppCompatActivity() {
             addContactLauncher.launch(intent)
         }
 
-        // Configurar o SearchView
         val searchView: SearchView = findViewById(R.id.searchView)
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
@@ -93,7 +91,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun onFavoriteClick(contact: Contact) {
         contact.isFavorite = !contact.isFavorite
-        adapter.updateContact(contact) // Atualiza o contato na lista
+        adapter.updateContact(contact)
         adapter.sortContacts()
     }
 
